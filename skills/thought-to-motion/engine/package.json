@@ -1,0 +1,23 @@
+{
+  "name": "thought-to-motion-engine",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Transcript-driven motion design for short talking-head, voice and text videos",
+  "scripts": {},
+  "dependencies": {
+    "remotion": "4.0.536",
+    "@remotion/cli": "4.0.536",
+    "@remotion/renderer": "4.0.536",
+    "@remotion/bundler": "4.0.536",
+    "@remotion/transitions": "4.0.536",
+    "@remotion/captions": "4.0.536",
+    "@remotion/effects": "4.0.536",
+    "@remotion/light-leaks": "4.0.536",
+    "@remotion/motion-blur": "4.0.536",
+    "@remotion/noise": "4.0.536",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@fontsource/inter": "5.0.20",
+    "@fontsource/heebo": "5.0.20"
+  }
+}

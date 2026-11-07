@@ -1,0 +1,12 @@
+.venv/
+.cache/
+node_modules/
+jobs/
+*.mp4
+*.mov
+*.wav
+!skills/thought-to-motion/engine/sfx/*.wav
+.DS_Store
+tools/
+__pycache__/
+*.pyc

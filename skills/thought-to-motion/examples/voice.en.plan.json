@@ -1,0 +1,104 @@
+{
+ "mode": "voice",
+ "aspect": "9:16",
+ "lang": "en",
+ "theme": "light",
+ "fps": 30,
+ "duration": 14.0,
+ "source": "voice.wav",
+ "brand": {
+  "wordmark": "YOUR NAME",
+  "series": "notes"
+ },
+ "music": {
+  "style": "calm"
+ },
+ "motion": "calm",
+ "captionStyle": "kinetic",
+ "captions": [
+  {
+   "start": 0.2,
+   "end": 2.4,
+   "text": "Most of my ideas show up on a walk",
+   "emph": "walk"
+  },
+  {
+   "start": 2.6,
+   "end": 5.0,
+   "text": "So I stopped waiting for a desk",
+   "emph": "desk"
+  },
+  {
+   "start": 5.2,
+   "end": 8.2,
+   "text": "Record it, cut it, post it",
+   "emph": "post"
+  },
+  {
+   "start": 8.4,
+   "end": 11.0,
+   "text": "Three steps, ten minutes",
+   "emph": "minutes"
+  },
+  {
+   "start": 11.2,
+   "end": 13.6,
+   "text": "Where do your ideas show up?",
+   "emph": "ideas"
+  }
+ ],
+ "keywords": [],
+ "elements": [
+  {
+   "type": "title",
+   "start": 0.2,
+   "end": 2.5,
+   "kicker": "Notes",
+   "text": "Ideas on a walk",
+   "emphasis": "walk"
+  },
+  {
+   "type": "icon",
+   "icon": "laptop",
+   "label": "No desk needed",
+   "start": 2.6,
+   "end": 5.1
+  },
+  {
+   "type": "diagram",
+   "kind": "steps",
+   "start": 5.2,
+   "end": 11.1,
+   "kicker": "How",
+   "items": [
+    {
+     "text": "Record it",
+     "at": 5.3
+    },
+    {
+     "text": "Cut it",
+     "at": 6.3
+    },
+    {
+     "text": "Post it",
+     "at": 7.3
+    }
+   ],
+   "fan": {
+    "items": [
+     "Reels",
+     "Shorts",
+     "TikTok"
+    ],
+    "at": 9.0
+   }
+  },
+  {
+   "type": "endcard",
+   "start": 11.2,
+   "end": 14.0,
+   "kicker": "Your turn",
+   "text": "Where do your ideas show up?"
+  }
+ ]
+}

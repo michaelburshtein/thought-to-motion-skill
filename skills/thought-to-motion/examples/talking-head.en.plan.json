@@ -1,0 +1,200 @@
+{
+ "mode": "talking-head",
+ "lang": "en",
+ "theme": "light",
+ "fps": 30,
+ "duration": 42.4,
+ "source": "source.mp4",
+ "brand": {
+  "wordmark": "YOUR NAME",
+  "series": "notes"
+ },
+ "captions": [
+  {
+   "start": 0.0,
+   "end": 1.6,
+   "text": "I used to keep a long to-do list"
+  },
+  {
+   "start": 1.7,
+   "end": 3.4,
+   "text": "and most of it never got done"
+  },
+  {
+   "start": 3.5,
+   "end": 4.6,
+   "text": "Sound familiar?"
+  },
+  {
+   "start": 5.0,
+   "end": 7.2,
+   "text": "Then I tried one simple rule"
+  },
+  {
+   "start": 7.4,
+   "end": 9.6,
+   "text": "the two-minute rule"
+  },
+  {
+   "start": 9.8,
+   "end": 12.4,
+   "text": "If something takes less than two minutes"
+  },
+  {
+   "start": 12.5,
+   "end": 14.2,
+   "text": "you do it right now"
+  },
+  {
+   "start": 14.4,
+   "end": 16.6,
+   "text": "Reply to that message"
+  },
+  {
+   "start": 16.7,
+   "end": 18.2,
+   "text": "put the cup in the sink"
+  },
+  {
+   "start": 18.3,
+   "end": 20.0,
+   "text": "send the invoice"
+  },
+  {
+   "start": 20.6,
+   "end": 22.8,
+   "text": "So which one wins?"
+  },
+  {
+   "start": 23.0,
+   "end": 25.0,
+   "text": "Writing it down for later"
+  },
+  {
+   "start": 25.1,
+   "end": 27.0,
+   "text": "or just doing it now?"
+  },
+  {
+   "start": 27.6,
+   "end": 30.2,
+   "text": "For small things, now wins"
+  },
+  {
+   "start": 30.3,
+   "end": 32.8,
+   "text": "because writing it down takes longer"
+  },
+  {
+   "start": 33.2,
+   "end": 35.6,
+   "text": "and the list stays short"
+  },
+  {
+   "start": 36.0,
+   "end": 38.4,
+   "text": "A short list is one you actually read"
+  },
+  {
+   "start": 39.0,
+   "end": 41.6,
+   "text": "What will you do in the next two minutes?"
+  }
+ ],
+ "keywords": [],
+ "elements": [
+  {
+   "type": "title",
+   "start": 0.12,
+   "end": 3.3,
+   "kicker": "A small habit",
+   "text": "The two-minute rule",
+   "emphasis": "two-minute"
+  },
+  {
+   "type": "lightleak",
+   "at": 0.0,
+   "duration": 1.4,
+   "seed": 2
+  },
+  {
+   "type": "sfx",
+   "at": 0.15,
+   "sound": "whoosh",
+   "volume": 0.35
+  },
+  {
+   "type": "keyword",
+   "start": 7.4,
+   "end": 12.3,
+   "title": "Two-minute rule",
+   "subtitle": "under two minutes? do it now",
+   "top": 760
+  },
+  {
+   "type": "sfx",
+   "at": 7.4,
+   "sound": "pop",
+   "volume": 0.4
+  },
+  {
+   "type": "keyword",
+   "start": 12.5,
+   "end": 16.4,
+   "title": "Do it now",
+   "tone": "light",
+   "rotate": 2,
+   "top": 780
+  },
+  {
+   "type": "keyword",
+   "start": 16.7,
+   "end": 20.4,
+   "title": "Small things",
+   "subtitle": "a message, a cup, an invoice",
+   "top": 760
+  },
+  {
+   "type": "compare",
+   "start": 20.6,
+   "end": 35.8,
+   "options": [
+    {
+     "text": "Write it down",
+     "at": 23.0
+    },
+    {
+     "text": "Do it now",
+     "at": 25.1
+    }
+   ],
+   "kicker": "Which one wins?",
+   "reveal": {
+    "at": 27.6,
+    "correct": 1,
+    "correctTag": "for small things",
+    "wrongTag": "takes longer",
+    "kicker": "Now wins"
+   }
+  },
+  {
+   "type": "sfx",
+   "at": 27.6,
+   "sound": "ding",
+   "volume": 0.35
+  },
+  {
+   "type": "punchin",
+   "start": 27.5,
+   "end": 32.8,
+   "scale": 1.09
+  },
+  {
+   "type": "endcard",
+   "start": 38.9,
+   "end": 42.4,
+   "kicker": "Your turn",
+   "text": "What will you do in the next two minutes?"
+  }
+ ]
+}
