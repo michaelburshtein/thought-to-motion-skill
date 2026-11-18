@@ -28,7 +28,7 @@ const isEmph = (w, cue, plan) => {
   return isKey(w, plan.keywords || []);
 };
 
-export const KineticLine = ({ t, plan, cue, rtl, size }) => {
+export const KineticLine = ({ t, plan, cue, rtl, size, roomOnLight = false }) => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig();
   const words = tokens(cue.text, rtl);
   const times = wordTimes(cue, words);
@@ -55,7 +55,9 @@ export const KineticLine = ({ t, plan, cue, rtl, size }) => {
             transform: `translateY(${(1 - on) * size * rise}px) scale(${emph ? 1 + grow * on : 1})`, transformOrigin: "50% 80%",
             // the emphasised word grows 14% from its centre: give it room on both sides in proportion to its own width,
             // or a long word (with its marker) touches its neighbour ("עקביות,שנה"; review 2026-10-27)
-            margin: emph ? `0 ${size * (0.05 + (0.028 * grow / 0.14) * Math.max(2, w.length))}px` : 0 }}>
+            // roomOnLight (opener only): the room opens as the word lights, so the dimmed word does not
+            // sit in a double gap ("one  setup." on frame 0). Off for running captions, where a growing margin could rewrap.
+            margin: emph ? `0 ${size * (0.05 + (0.028 * grow / 0.14) * Math.max(2, w.length)) * (roomOnLight ? on : 1)}px` : 0 }}>
             {emph && emphStyle === "marker" && <span style={{ position: "absolute", left: -6, right: -6, bottom: "6%", height: "30%", borderRadius: 4,
               background: t.marker, opacity: 0.85, transform: `scaleX(${emphOn})`, transformOrigin: rtl ? "right" : "left", zIndex: -1 }} />}
             {w}
@@ -147,7 +149,7 @@ export const KineticCaptions = ({ t, plan }) => {
         const key = cue.emph ? isEmph(w, cue, plan) : isKey(w, keywords);
         return (
           <span key={i} dir="auto" style={{ unicodeBidi: "isolate", display: "inline-block",
-            fontFamily: rtl ? t.rtl : t.ui, fontWeight: 800, fontSize: rtl ? 80 : 74, lineHeight: 1.15,
+            fontFamily: rtl ? t.rtl : t.ui, fontWeight: 800, fontSize: Math.min(rtl ? 80 : 74, Math.floor((SAFE.right - 90) / (Math.max(...words.map((x) => x.length)) * 0.56))), lineHeight: 1.15,
             color: key ? t.accent : t.ink, opacity: Math.min(1, s * 1.6), transform: `translateY(${(1 - s) * 30}px)`,
             textShadow: key && t.look?.emph === "glow" ? `0 0 26px ${t.accent}80` : "none",
             background: key && (t.look?.emph || "marker") === "marker" ? `linear-gradient(transparent 65%, ${t.marker} 65%)` : "none" }}>{w}</span>

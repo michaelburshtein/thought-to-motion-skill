@@ -139,7 +139,13 @@ const Outro = ({ plan, t }) => {
 const Opener = ({ plan, t }) => {
   const f = useCurrentFrame(); const { fps, durationInFrames: N } = useVideoConfig();
   const o = plan.opener; const rtl = isRtl(plan.lang);
-  const z = interpolate(f, [0, N], [1.0, 1.07], { ...clamp, easing: Easing.inOut(Easing.sin) });
+  // opener.snap (e.g. 1.3): the first frames open close on his face and snap back to the frame in ~0.15 s
+  // (eased out), then the slow push-in runs.
+  // Also accepts move: "snap", which means snap 1.3.
+  const snapZ = o.snap || (o.move === "snap" ? 1.3 : 0);
+  const S = snapZ ? Math.max(2, Math.round((o.snapSec || 0.15) * fps)) : 0;
+  const z = f < S ? interpolate(f, [0, S], [snapZ, 1.0], { ...clamp, easing: Easing.out(Easing.cubic) })
+    : interpolate(f, [S, N], [1.0, 1.07], { ...clamp, easing: Easing.inOut(Easing.sin) });
   const cue = { text: o.text, emph: o.emph, words: o.words, start: 0, end: N / fps };
   const second = fade(f, 6, 16);
   return (
@@ -151,7 +157,7 @@ const Opener = ({ plan, t }) => {
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 48%, rgba(0,0,0,0.62) 72%, rgba(0,0,0,0.7) 100%)" }} />
       <Texture t={t} />
       <div style={{ position: "absolute", left: SAFE.left, width: SAFE.right - SAFE.left, top: 1040 }}>
-        <KineticLine t={t} plan={{ keywords: [] }} cue={cue} rtl={rtl} size={o.size || 86} />
+        <KineticLine t={t} plan={{ keywords: [] }} cue={cue} rtl={rtl} size={o.size || 86} roomOnLight />
         {o.text2 && <div style={{ marginTop: 22, textAlign: "center", fontFamily: t.ui, fontWeight: 600, fontSize: 40, color: "#fff",
           opacity: 0.85 * second }}>{o.text2}</div>}
       </div>

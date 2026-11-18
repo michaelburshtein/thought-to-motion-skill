@@ -270,11 +270,16 @@ const EndCard = ({ el, t, plan, surface }) => {
   if (!visible) return null;
   const big = surface === "canvas";
   const bob = Math.sin((frame - sec(el.start, fps)) / 7) * 6;
+  // Fit the line to the safe width: a long unbreakable word (a URL) must never run off the frame.
+  const room = SAFE.right - 72 - (big ? 0 : 64) - (el.cta ? 0 : 60);
+  const longest = Math.max(...String(el.text).split(/\s+/).map((w) => w.length), 1);
+  const fit = Math.floor(room / (longest * 0.56));
+  const headSize = Math.min(el.size || (big ? 124 : 66), fit);
   return (
     <div style={{ position: "absolute", top: big ? 400 : (el.top ?? 300), left: 72, right: 1080 - SAFE.right, opacity: o, transform: `translateY(${(1 - s) * 50}px)` }}>
       <div style={{ display: "inline-block", ...(big ? {} : { background: t.paper, borderRadius: 18, padding: "24px 32px", boxShadow: "0 10px 30px rgba(0,0,0,0.22)" }) }}>
         {el.kicker && <Kicker t={t}>{el.kicker}</Kicker>}
-        <div style={{ marginTop: 10, fontFamily: headFont(t, hasRtl(el.text)), fontWeight: t.headlineWeight, fontSize: big ? 124 : 66, lineHeight: 1.03, color: t.ink }}>
+        <div style={{ marginTop: 10, fontFamily: headFont(t, hasRtl(el.text)), fontWeight: t.headlineWeight, fontSize: headSize, lineHeight: 1.03, color: t.ink }}>
           <T plan={plan}>{el.text}</T>
           {!el.cta && <span style={{ display: "inline-block", marginLeft: 16, transform: `translateY(${bob}px)`, color: t.accent }}>{"↓"}</span>}
         </div>

@@ -95,7 +95,12 @@ difference) and the printed match numbers before processing.
 .venv/bin/python scripts/background.py <job> <plate.jpg> --draft [--reveal SECONDS]   # drafts: half resolution, ~4x faster
 .venv/bin/python scripts/background.py <job> <plate.jpg> [--reveal SECONDS]           # final: full resolution
 # options: [--match 0.65] [--wrap 0.35] [--preview SECONDS]
+# integration (all off by default): [--erode PX] [--feather PX] [--choke 0..0.5] [--blacks 0..1] [--ambient 0..1] [--sat 0.88] [--soft PX]
 ```
+Integration options help the person sit in the new room: `--erode`/`--choke` pull the matte edge in (no light rim of
+the old wall around hair and shoulders), `--feather` softens it like a real lens, `--blacks` and `--ambient` take the
+room's darkest tone and colour into the person's shadows, `--sat`/`--soft` match a punchy, sharpened phone picture to
+a softer plate. Judge them on a `--preview` frame first.
 Local portrait matting (MODNet) combined with a clean-room difference matte: with a static camera, the median of
 the clip is the empty room, and anything that differs from it (fast hands, hair, arms) is kept as the person.
 The empty room is learned only from frames where each spot is actually empty (the person is masked out first),
@@ -173,6 +178,12 @@ twice; wide while cards need room, close on punch-ins and reveals; each zoomed s
 camera is tested against the cards and captions so the face stays clear. Close-up selfies (face taller than a
 third of the frame) get no virtual cameras in 9:16 - there is no room to go closer. No AI-generated angles: the
 footage stays real and local. Add a "camera" column (A/B/C) to the Gate 1 table.
+
+Two optional shot fields, for hand-made or post-processed shots: `"ease": 0.6` (seconds) glides from the previous
+shot's framing instead of cutting (use it for a "make room" move when a side panel comes in, and for the move back),
+and `"anchor": "top"` keeps the crop's top edge fixed while a shot pushes in, so the head moves down, away from the
+header and top cards, instead of up into them. Keep camera moves off a second-camera angle that is cut into the
+source: a crop of that angle reads as a zoom, not a camera.
 
 ## 6. Stills -> GATE 2 (approval)
 
@@ -340,6 +351,9 @@ Every video runs: **video catchphrase (opener) -> 2 s brand intro -> the full vi
   (no header, bar, icons or panels). End it in the pause AFTER the last word: check the audio envelope, because
   transcript word times can run 0.2-0.3 s early.
   Filming tip: decide the line before filming and leave a short pause before and after it.
+  Optional `"snap": 1.3` in the opener (or `"move": "snap"`): the first frames open close on the face and snap back to
+  the full frame in ~0.15 s (`snapSec`), then the slow push-in runs: movement from frame 0. The opener's lit word opens
+  its own space as it lights, so the dimmed line never shows a double gap on frame 0.
 - **Intro (2 s)**: the soundtrack bar draws, the play triangle presses in, the wordmark + series label land with the
   brand catchphrase, then everything fades and the video's header takes over.
 - **Outro (3 s)**: the wordmark, "Follow" (Hebrew: "עקבו אחריי") + the handle (`bumpers.handle`), the brand catchphrase

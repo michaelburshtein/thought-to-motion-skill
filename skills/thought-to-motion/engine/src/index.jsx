@@ -22,9 +22,8 @@ const Root = () => (
     defaultProps={{ plan: EXAMPLE }}
     calculateMetadata={({ props }) => {
       const fps = props.plan.fps || 30;
-      const wide = props.plan.aspect === "16:9";
-      return { fps, durationInFrames: Math.max(1, Math.floor(props.plan.duration * fps)),
-               width: wide ? 1920 : 1080, height: wide ? 1080 : 1920 };
+      const [width, height] = { "16:9": [1920, 1080] }[props.plan.aspect] || [1080, 1920];
+      return { fps, durationInFrames: Math.max(1, Math.floor(props.plan.duration * fps)), width, height };
     }}
   />
   <Composition

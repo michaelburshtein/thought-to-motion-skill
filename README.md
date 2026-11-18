@@ -60,7 +60,7 @@ or *"Turn this voice note into a Reel."*
 | path | what |
 |---|---|
 | `skills/thought-to-motion/SKILL.md` | the workflow Claude follows (setup → prep → plan → gate → stills → gate → render) |
-| `references/plan-schema.md` | every element (title, keyword, compare, icon, image, list, diagram, behind, media, logo, endcard, punchin, sfx, lightleak, silence) and the plan options (mode, aspect, music, motion, shots) |
+| `references/plan-schema.md` | every element (title, keyword, compare, icon, image, list, diagram, behind, media, logo, endcard, punchin, sfx, lightleak, silence) and the plan options (mode, aspect, music, motion, virtual-camera shots with optional glides and a top anchor, an opener snap) |
 | `references/motion-rules.md`, `references/prompts/` | research-based motion rules and the six stage prompts (story, motion, captions, sound, independent reviewer, text-to-video) |
 | `references/design-rules.md` | how spoken beats map to motion, rhythm, honesty and rights rules |
 | `engine/` | a Remotion 4 project (pinned) that renders any plan in any mode; 3 neutral starter themes (light, dark, bold) and mix-and-match looks, to be replaced with your own brand |

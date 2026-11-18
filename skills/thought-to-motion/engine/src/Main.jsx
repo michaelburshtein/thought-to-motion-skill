@@ -23,16 +23,36 @@ const usePunch = (plan) => {
 // Virtual cameras (plan.shots, from scripts/shots.py): each shot crops the same footage differently - a hard cut
 // between "cameras", then a very slow push-in inside the shot. Returns the CSS transform for a 100%x100% layer.
 export const shotAt = (plan, t) => (plan.shots || []).find((s) => t >= s.start && t < s.end) || null;
+// A shot's crop at time t: zoom (with its slow drift), top-left x/y, kept inside the frame.
+const cropAt = (s, t) => {
+  const W = 1080, H = 1920;
+  if (!s) return { z: 1, x: 0, y: 0 };
+  const p = Math.min(1, Math.max(0, (t - s.start) / Math.max(0.1, s.end - s.start)));
+  const z = Math.max(1, s.zoom * (1 + (s.drift || 0) * Easing.inOut(Easing.sin)(p)));
+  const cx = s.x + W / (2 * s.zoom), cy = s.y + H / (2 * s.zoom);
+  // anchor "top": the crop's top edge stays put while it zooms, so a push-in moves the head DOWN, away from
+  // the badge and the top cards (a centred push would lift the head into the badge).
+  const y = s.anchor === "top" ? s.y : cy - H / (2 * z);
+  return { z, x: Math.min(Math.max(cx - W / (2 * z), 0), W - W / z), y: Math.min(Math.max(y, 0), H - H / z) };
+};
+// shot.ease (seconds): instead of a hard cut, the camera glides from where the previous shot ended
+// ("make room" moves when a panel comes in, and the move back). Measured in the frame's centre, so it never leaves it.
 const useCamera = (plan) => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig();
   const t = frame / fps; const s = shotAt(plan, t);
-  if (!s || s.zoom <= 1.0001) return { transform: "none", zoomed: false };
-  const p = Math.min(1, Math.max(0, (t - s.start) / Math.max(0.1, s.end - s.start)));
-  const z = s.zoom * (1 + (s.drift || 0) * Easing.inOut(Easing.sin)(p));
-  // keep the crop centred while it pushes in, and inside the frame
-  const W = 1080, H = 1920, cx = s.x + W / (2 * s.zoom), cy = s.y + H / (2 * s.zoom);
-  const x = Math.min(Math.max(cx - W / (2 * z), 0), W - W / z), y = Math.min(Math.max(cy - H / (2 * z), 0), H - H / z);
-  return { transform: `scale(${z}) translate(${(-x / W) * 100}%, ${(-y / H) * 100}%)`, zoomed: true };
+  if (!s) return { transform: "none", zoomed: false };
+  let c = cropAt(s, t);
+  if (s.ease && t - s.start < s.ease) {
+    const prev = (plan.shots || []).find((q) => Math.abs(q.end - s.start) < 0.02);
+    const a = cropAt(prev, s.start - 0.001), k = Easing.inOut(Easing.cubic)((t - s.start) / s.ease);
+    const W = 1080, H = 1920, z = a.z + (c.z - a.z) * k;
+    const cxa = a.x + W / (2 * a.z), cya = a.y + H / (2 * a.z), cxb = c.x + W / (2 * c.z), cyb = c.y + H / (2 * c.z);
+    const cx = cxa + (cxb - cxa) * k, cy = cya + (cyb - cya) * k;
+    c = { z, x: Math.min(Math.max(cx - W / (2 * z), 0), W - W / z), y: Math.min(Math.max(cy - H / (2 * z), 0), H - H / z) };
+  }
+  if (c.z <= 1.0001) return { transform: "none", zoomed: false };
+  const W = 1080, H = 1920;
+  return { transform: `scale(${c.z}) translate(${(-c.x / W) * 100}%, ${(-c.y / H) * 100}%)`, zoomed: true };
 };
 
 // A word behind the speaker's head: {"type": "behind", "text", "start", "end"} + "cutout"/"frames"/"x"/"y"

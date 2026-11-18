@@ -64,7 +64,8 @@ def stills(job, plan_path, times, guides=True):
         f = int(t * plan.get("fps", 30)); p = os.path.abspath(os.path.join(sd, f"t{t:06.2f}.png"))
         remotion(["still", "src/index.jsx", "Main", p, f"--frame={f}"], job, plan_path, guides)
         paths.append((t, p))
-    w, h, cols = 324, 576, 4
+    w, cols = 324, 4
+    with Image.open(paths[0][1]) as im0: h = round(w * im0.height / im0.width)  # 9:16 -> 576, as before; feed formats keep their shape
     rows = (len(paths) + cols - 1) // cols
     sheet = Image.new("RGB", (w * cols, h * rows), "white")
     for i, (t, p) in enumerate(paths):

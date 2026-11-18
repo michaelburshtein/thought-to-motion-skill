@@ -26,6 +26,7 @@ import sys
 import urllib.request
 
 import numpy as np
+import cv2
 from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -138,6 +139,15 @@ def main():
     ap.add_argument("--reveal", type=float, default=None); ap.add_argument("--wipe", type=float, default=0.7)
     ap.add_argument("--match", type=float, default=0.65); ap.add_argument("--wrap", type=float, default=0.35)
     ap.add_argument("--grain", type=float, default=3.0)
+    # Integration. All default off.
+    ap.add_argument("--erode", type=int, default=0, help="shrink the matte by N px before feathering (the old wall in edge pixels)")
+    ap.add_argument("--feather", type=float, default=0.0, help="soften the matte edge, px at 1080 wide (a real lens edge is never razor sharp)")
+    ap.add_argument("--blacks", type=float, default=0.0, help="0..1: lift and tint the person's blacks to the room's darkest tone")
+    ap.add_argument("--ambient", type=float, default=0.0, help="0..1: the room's colour in the person's shadows (bounce light)")
+    ap.add_argument("--sat", type=float, default=1.0, help="person saturation (e.g. 0.88 when the face is punchier than the room)")
+    ap.add_argument("--soft", type=float, default=0.0, help="person blur, px (phone sharpening vs a soft plate)")
+    ap.add_argument("--choke", type=float, default=0.0,
+                    help="pull the matte edge in (0..0.5): removes a light rim of the old wall around hair and shoulders")
     ap.add_argument("--preview", type=float, default=None, help="render one frame at this time to work/ and stop")
     ap.add_argument("--draft", action="store_true",
                     help="half resolution (540x960) and a lighter matte: ~3-4x faster, for draft renders only")
@@ -202,6 +212,9 @@ def main():
     tint = (bg / max(bg.mean(), 1e-3)) / (fg / max(fg.mean(), 1e-3))
     tint = 1 + (np.clip(tint, 0.8, 1.25) - 1) * a.match
     print(f"light match: brightness x{gain_l:.2f}, colour {np.round(tint, 3).tolist()}")
+    p_black = np.percentile(P.reshape(-1, 3), 3, axis=0).astype(np.float32)          # the room's darkest tone
+    amb = (bg / max(bg.mean(), 1e-3)).astype(np.float32)                              # the room's colour, unit mean
+    print(f"integration: feather {a.feather}px, blacks {a.blacks} -> {np.round(p_black * 255).tolist()}, ambient {a.ambient} {np.round(amb, 3).tolist()}, sat {a.sat}, soft {a.soft}px")
 
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
     desk = None
@@ -231,6 +244,9 @@ def main():
     def compose(fr, al, i=0):
         F0 = F = fr.astype(np.float32) / 255
         A = np.clip((al - 0.04) / 0.92, 0, 1)
+        if a.choke > 0: A = np.clip((A - a.choke) / (1 - a.choke), 0, 1)   # removes a light rim of the old wall
+        if a.erode > 0: A = cv2.erode(A.astype(np.float32), cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * a.erode + 1, 2 * a.erode + 1)))
+        if a.feather > 0: A = cv2.GaussianBlur(A.astype(np.float32), (0, 0), a.feather * W / 1080)
         if room is not None:
             # edge decontamination: semi-transparent edges (hair) still carry the old wall's colour; with the empty room
             # known, solve I = A*F + (1-A)*R for F so the old wall never shows through as a grey rim
@@ -241,6 +257,13 @@ def main():
         if keep is not None: A = np.maximum(A, keep)          # the desk and resting arms stay as filmed
         A = A[..., None]
         Fm = np.clip(F * gain_l * tint, 0, 1)                 # person relit toward the plate
+        if a.soft > 0: Fm = cv2.GaussianBlur(Fm, (0, 0), a.soft * W / 1080)
+        if a.sat != 1.0:
+            Y = (Fm @ np.array([0.2126, 0.7152, 0.0722], np.float32))[..., None]; Fm = np.clip(Y + (Fm - Y) * a.sat, 0, 1)
+        if a.ambient > 0:
+            sh = np.clip(1 - (Fm @ np.array([0.2126, 0.7152, 0.0722], np.float32)) / 0.5, 0, 1)[..., None] * a.ambient
+            Fm = Fm * (1 - sh) + np.clip(Fm * amb, 0, 1) * sh
+        if a.blacks > 0: Fm = Fm + (p_black * a.blacks) * (1 - Fm)
         edge = np.clip(A * (1 - A) * 4, 0, 1)                 # light wrap on the edges
         Fm = Fm * (1 - a.wrap * edge) + P_wrap * (a.wrap * edge)
         comp = (Fm * A + P * (1 - A)) * vign

@@ -124,7 +124,7 @@ def make(duration, style="calm", bpm=84, key="A", seed=1):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("out")
-    ap.add_argument("--duration", type=float, required=True); ap.add_argument("--style", default="calm", choices=["calm", "warm", "pulse"])
+    ap.add_argument("--duration", type=float, required=True); ap.add_argument("--style", default="calm", choices=["calm", "warm", "pulse", *STYLES])
     ap.add_argument("--bpm", type=float, default=None); ap.add_argument("--key", default=None); ap.add_argument("--seed", type=int, default=1)
     a = ap.parse_args()
     sf.write(a.out, make(a.duration, a.style, a.bpm, a.key, a.seed), SR, subtype="PCM_16")
